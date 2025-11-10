@@ -520,17 +520,32 @@ class MCPManager:
                         "parameters": self._convert_mcp_parameters_to_openapi_format(
                             func.get('parameters', {})
                         ),
-                        "response_schemas": func.get(
-                            'outputSchema', ""
-                        ),  # MCP tools don't typically have response schemas defined
+                        "response_schemas": func.get('outputSchema', {}),
                     }
 
                     if include_response_schema:
-                        # Add empty response schema structure for consistency
-                        api_info["response_schemas"] = {
-                            "success": {"result": "string"},
-                            "failure": {"error": "string"},
-                        }
+                        output_schema = func.get('outputSchema', {})
+                        if output_schema:
+                            # FastMCP wraps results in a "result" field with x-fastmcp-wrap-result flag
+                            # Unwrap it to get the actual response schema
+                            if output_schema.get('x-fastmcp-wrap-result') and 'properties' in output_schema:
+                                result_prop = output_schema.get('properties', {}).get('result', {})
+                                api_info["response_schemas"] = {
+                                    "success": result_prop,
+                                    "failure": {"error": "string"},
+                                }
+                            else:
+                                # Use the output schema as-is if not wrapped
+                                api_info["response_schemas"] = {
+                                    "success": output_schema,
+                                    "failure": {"error": "string"},
+                                }
+                        else:
+                            # Fallback to default if no output schema is defined
+                            api_info["response_schemas"] = {
+                                "success": {"result": "string"},
+                                "failure": {"error": "string"},
+                            }
 
                     result[tool_name] = api_info
 
@@ -591,12 +606,15 @@ class MCPManager:
                         input_schema = tool.inputSchema if hasattr(tool, 'inputSchema') else {}
                         flattened_params = self._flatten_tool_parameters(input_schema)
 
+                        output_schema = tool.outputSchema if hasattr(tool, 'outputSchema') else {}
+
                         tool_dict = {
                             "type": "function",
                             "function": {
                                 "name": prefixed_name,
                                 "description": tool.description,
                                 "parameters": flattened_params,
+                                "outputSchema": output_schema,
                             },
                         }
                         self.tools_by_server[name].append(tool_dict)
