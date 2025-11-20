@@ -1,0 +1,86 @@
+# SAP GenAI Hub Configuration
+# This configuration uses SAP's GenAI Hub for all agents
+
+[agent.planner.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.chat.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.shortlister.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.plan_controller.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.final_answer.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.code.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.code_planner.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.qa.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.action.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[agent.task_decomposition.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[memory.mem0.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[memory.milvus.step_processing.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[memory.milvus.fact_extraction.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000
+
+[memory.tips_extractor.model]
+platform = "sap-genai"
+model_name = "gpt-5"
+temperature = 1
+max_tokens = 200000

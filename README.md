@@ -13,6 +13,48 @@
 
 </div>
 
+---
+
+> [!IMPORTANT]  
+> **🔴 SAP GenAI Hub Fork Notice**
+>
+> This is a forked repository of the [original CUGA project from IBM Research](https://github.com/cuga-project/cuga-agent). This fork introduces integration with **SAP GenAI Hub** for model management.
+>
+> ### 🚀 Quick Start with SAP GenAI Hub
+>
+> **Configure Models**: Edit `settings.sap-genai.toml` to change the models used by the agents.
+>
+> **Start CUGA with SAP GenAI Hub**:
+> ```bash
+> uv venv --python=3.12 && source .venv/bin/activate
+> uv sync
+> export AGENT_SETTING_CONFIG="settings.sap-genai.toml"
+> cuga start demo
+> ```
+>
+> **Try it out**:
+> ```
+> get top account by revenue from digital sales
+> ```
+>
+> ### ✅ Tested Models
+>
+> **Working Models**:
+> - `gpt-4o`
+> - `gpt-4o-mini`
+> - `gpt-5`
+> - `anthropic--claude-3.7-sonnet`
+> - `anthropic--claude-4-sonnet`
+>
+> **Not Working**:
+> - `gpt-4`
+> - `sap-rpt-1sonar-pro`
+> - `anthropic--claude-4.5-sonnet`
+>
+> **Note**: OpenAI models are currently accessed through SAP GenAI Hub's SAP using 'init_llm'. SAP's GenAIHub native OpenAI client support is not yet implemented due to integration complexity.
+
+---
+
 > **📢 Recent Updates**
 >
 > - **Nov 11, 2025** — ⚡ **CugaLite Mode**: Experience fast execution for simple API tasks! CugaLite automatically activates when your app has fewer than 25 tools, delivering up to 3x faster performance while maintaining high accuracy. Perfect for streamlined workflows and quick API operations.

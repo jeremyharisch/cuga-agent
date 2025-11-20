@@ -9,6 +9,9 @@ from langchain_ibm import ChatWatsonx
 from langchain_core.language_models.chat_models import BaseChatModel
 from loguru import logger
 
+from gen_ai_hub.proxy.langchain.init_models import init_llm
+from gen_ai_hub.proxy.core import get_proxy_client
+
 try:
     from langchain_groq import ChatGroq
 except ImportError:
@@ -361,12 +364,26 @@ class LLMManager:
                 temperature=temperature,
                 max_tokens=max_tokens,
             )
+        elif platform == "sap-genai":
+            logger.debug(f"Creating SAP GenAI Hub model: {model_name}")
+            proxy_client = get_proxy_client()
+            print("Available deployments:")
+            for deployment in proxy_client.deployments:
+                print(f"  - Model: {deployment.model_name}")
+                print(f"    Deployment ID: {deployment.deployment_id}")
+                print()
+            llm = init_llm(
+                model_name=model_name,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+
         else:
             raise ValueError(f"Unsupported platform: {platform}")
 
         return llm
 
-    def get_model(self, model_settings: Dict[str, Any], max_tokens: int = 1000):
+    def get_model(self, model_settings: Dict[str, Any], max_tokens: int = 100000):
         """Get or create LLM instance for the given model settings
 
         Args:
@@ -378,7 +395,7 @@ class LLMManager:
             logger.debug(f"Using pre-instantiated model: {type(self._pre_instantiated_model).__name__}")
             # Update parameters for the task
             updated_model = self._update_model_parameters(
-                self._pre_instantiated_model, temperature=0.1, max_tokens=max_tokens
+                self._pre_instantiated_model, temperature=1, max_tokens=max_tokens
             )
             return updated_model
 
@@ -397,7 +414,7 @@ class LLMManager:
             # Update parameters for the task
             cached_model = self._models[cache_key]
             updated_model = self._update_model_parameters(
-                cached_model, temperature=0.1, max_tokens=max_tokens
+                cached_model, temperature=1, max_tokens=max_tokens
             )
             return updated_model
 
@@ -409,5 +426,5 @@ class LLMManager:
         self._models[cache_key] = model
 
         # Update parameters for the task
-        updated_model = self._update_model_parameters(model, temperature=0.1, max_tokens=max_tokens)
+        updated_model = self._update_model_parameters(model, temperature=1, max_tokens=max_tokens)
         return updated_model
