@@ -48,7 +48,8 @@
 >
 > **Not Working**:
 > - `gpt-4`
-> - `sap-rpt-1sonar-pro`
+> - `sap-rpt-1`
+> - `sonar-pro`
 > - `anthropic--claude-4.5-sonnet`
 >
 > **Note**: OpenAI models are currently accessed through SAP GenAI Hub's SAP using 'init_llm'. SAP's GenAIHub native OpenAI client support is not yet implemented due to integration complexity.
