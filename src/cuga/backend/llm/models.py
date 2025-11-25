@@ -247,26 +247,42 @@ class LLMManager:
             return api_version
 
     def _get_base_url(self, model_settings: Dict[str, Any], platform: str) -> str:
-        """Get base URL with environment variable override support"""
-        if platform == "openai":
-            # Check environment variable first
-            env_base_url = os.environ.get('OPENAI_BASE_URL')
-            if env_base_url:
-                logger.info(f"Using OPENAI_BASE_URL from environment: {env_base_url}")
-                return env_base_url
+        """Get base URL with environment variable override support
+        
+        For OpenAI clients, normalize the base URL to include '/v1' since the SDK
+        posts to '/chat/completions' relative to the base. Proxies typically expose
+        OpenAI-compatible endpoints under '/v1'.
+        """
+        def _normalize_openai_base(url: Optional[str]) -> Optional[str]:
+            if not url:
+                return None
+            # Trim trailing slash and ensure /v1 suffix
+            trimmed = url.rstrip('/')
+            if trimmed.endswith('/v1'):
+                return trimmed
+            return f"{trimmed}/v1"
 
-            # Check TOML settings (for litellm compatibility)
-            toml_url = model_settings.get('url')
+        if platform == "openai":
+            # Environment variable overrides (support both names)
+            env_base_url = os.environ.get('OPENAI_BASE_URL') or os.environ.get('OPENAI_API_BASE')
+            if env_base_url:
+                normalized = _normalize_openai_base(env_base_url)
+                logger.info(f"Using OPENAI base URL from environment (normalized): {normalized}")
+                return normalized
+
+            # Check TOML settings: support both 'url' and 'base_url' keys
+            toml_url = model_settings.get('url') or model_settings.get('base_url')
             if toml_url:
-                logger.debug(f"Using url from TOML: {toml_url}")
-                return toml_url
+                normalized = _normalize_openai_base(toml_url)
+                logger.debug(f"Using base URL from TOML (normalized): {normalized}")
+                return normalized
 
             # Default to None (uses OpenAI's default endpoint)
             logger.debug("No base URL specified, using OpenAI default endpoint")
             return None
         else:
-            # For other platforms, use TOML settings
-            return model_settings.get('url')
+            # For other platforms, prefer 'url' but accept 'base_url' as fallback
+            return model_settings.get('url') or model_settings.get('base_url')
 
     def _create_llm_instance(self, model_settings: Dict[str, Any]):
         """Create LLM instance based on platform and settings"""
@@ -365,13 +381,6 @@ class LLMManager:
                 max_tokens=max_tokens,
             )
         elif platform == "sap-genai":
-            logger.debug(f"Creating SAP GenAI Hub model: {model_name}")
-            proxy_client = get_proxy_client()
-            print("Available deployments:")
-            for deployment in proxy_client.deployments:
-                print(f"  - Model: {deployment.model_name}")
-                print(f"    Deployment ID: {deployment.deployment_id}")
-                print()
             llm = init_llm(
                 model_name=model_name,
                 temperature=temperature,
@@ -383,19 +392,26 @@ class LLMManager:
 
         return llm
 
-    def get_model(self, model_settings: Dict[str, Any], max_tokens: int = 100000):
+    def get_model(self, model_settings: Dict[str, Any], max_tokens: int = None):
         """Get or create LLM instance for the given model settings
 
         Args:
             model_settings: Model configuration dictionary
-            max_tokens: Maximum tokens for the task (default: 1000)
+            max_tokens: Maximum tokens for the task (default: None, will use value from model_settings)
         """
+        # Get temperature and max_tokens from model_settings
+        temperature = model_settings.get('temperature', 0.7)
+        
+        # Use max_tokens from parameter if provided, otherwise use from model_settings
+        if max_tokens is None:
+            max_tokens = model_settings.get('max_tokens', 1000)
+        
         # Check if pre-instantiated model is available
         if self._pre_instantiated_model is not None:
             logger.debug(f"Using pre-instantiated model: {type(self._pre_instantiated_model).__name__}")
             # Update parameters for the task
             updated_model = self._update_model_parameters(
-                self._pre_instantiated_model, temperature=1, max_tokens=max_tokens
+                self._pre_instantiated_model, temperature=temperature, max_tokens=max_tokens
             )
             return updated_model
 
@@ -414,7 +430,7 @@ class LLMManager:
             # Update parameters for the task
             cached_model = self._models[cache_key]
             updated_model = self._update_model_parameters(
-                cached_model, temperature=1, max_tokens=max_tokens
+                cached_model, temperature=temperature, max_tokens=max_tokens
             )
             return updated_model
 
@@ -426,5 +442,5 @@ class LLMManager:
         self._models[cache_key] = model
 
         # Update parameters for the task
-        updated_model = self._update_model_parameters(model, temperature=1, max_tokens=max_tokens)
+        updated_model = self._update_model_parameters(model, temperature=temperature, max_tokens=max_tokens)
         return updated_model

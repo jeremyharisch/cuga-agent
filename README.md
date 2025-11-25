@@ -16,15 +16,15 @@
 ---
 
 > [!IMPORTANT]  
-> **🔴 SAP GenAI Hub Fork Notice**
+> **SAP GenAI Hub Fork — What You Need to Know**
 >
-> This is a forked repository of the [original CUGA project from IBM Research](https://github.com/cuga-project/cuga-agent). This fork introduces integration with **SAP GenAI Hub** for model management.
+> This repository is a fork of the [original CUGA project from IBM Research](https://github.com/cuga-project/cuga-agent), extended to integrate **SAP GenAI Hub** for model management. Below are two clear ways to get started.
 >
-> ### 🚀 Quick Start with SAP GenAI Hub
+> ### Option A — SAP GenAI Hub SDK
 >
-> **Configure Models**: Edit `settings.sap-genai.toml` to change the models used by the agents.
+> 1) Configure models in `settings.sap-genai.toml` (controls which models each agent uses).
 >
-> **Start CUGA with SAP GenAI Hub**:
+> 2) Start CUGA with SAP GenAI Hub:
 > ```bash
 > uv venv --python=3.12 && source .venv/bin/activate
 > uv sync
@@ -32,27 +32,29 @@
 > cuga start demo
 > ```
 >
-> **Try it out**:
+> 3) Try a sample task:
 > ```
 > get top account by revenue from digital sales
 > ```
 >
-> ### ✅ Tested Models
+> Tested status:
+> - Working: `gpt-4o`, `gpt-4o-mini`, `gpt-5`, `anthropic--claude-3.7-sonnet`, `anthropic--claude-4-sonnet`
+> - Not supported (currently): `gpt-4`, `gpt-4.1`, `sap-rpt-1`, `sonar-pro`, `anthropic--claude-4.5-sonnet`
 >
-> **Working Models**:
-> - `gpt-4o`
-> - `gpt-4o-mini`
-> - `gpt-5`
-> - `anthropic--claude-3.7-sonnet`
-> - `anthropic--claude-4-sonnet`
+> ### Option B — SAP GenAI Proxy (Preferred)
 >
-> **Not Working**:
-> - `gpt-4`
-> - `sap-rpt-1`
-> - `sonar-pro`
-> - `anthropic--claude-4.5-sonnet`
+> Use native LLM SDKs (e.g., OpenAI/Azure) via the SAP AI Proxy to support more models (including GPT‑4.1):
+> 1) Set up and start the SAP AI Proxy (internal repository).
+> 2) Run CUGA with the OpenAI settings:
+> ```bash
+> uv venv --python=3.12 && source .venv/bin/activate
+> uv sync
+> export AGENT_SETTING_CONFIG="settings.openai.toml"
+> cuga start demo
+> ```
 >
-> **Note**: OpenAI models are currently accessed through SAP GenAI Hub's SAP using 'init_llm'. SAP's GenAIHub native OpenAI client support is not yet implemented due to integration complexity.
+> Note: If you use a provider other than OpenAI, set the correct `BASE_URL` to the SAP proxy port for that provider. The `.env` shows the OpenAI example; adjust similarly for others.
+>
 
 ---
 

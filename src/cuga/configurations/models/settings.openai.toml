@@ -1,69 +1,83 @@
 [agent.task_decomposition.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 1000
+model_name = "gpt-4.1"
 
 [agent.planner.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 5000
+model_name = "gpt-4.1"
 
 [agent.chat.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 5000
+model_name = "gpt-4.1"
 
 [agent.shortlister.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 7000
+model_name = "gpt-4.1"
 
 [agent.plan_controller.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 6000
+model_name = "gpt-4.1"
 
 [agent.final_answer.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 15000
+model_name = "gpt-4.1"
 
 [agent.code.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 3000
+model_name = "gpt-4.1"
 
 [agent.code_planner.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 3000
+model_name = "gpt-4.1"
 
 [agent.qa.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 4000
+model_name = "gpt-4.1"
 
 [agent.action.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 400
+model_name = "gpt-4.1"
 
 [memory.mem0.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 1000
+model_name = "gpt-4.1"
 
 [memory.milvus.step_processing.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 1000
+model_name = "gpt-4.1"
 
 [memory.milvus.fact_extraction.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 1000
+model_name = "gpt-4.1"
 
 [memory.tips_extractor.model]
 platform = "openai"
-temperature = 0.1
+temperature = 1
 max_tokens = 5000
+model_name = "gpt-4.1"
